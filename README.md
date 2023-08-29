@@ -60,7 +60,7 @@ A PyQT5 Based Task Manager for Linux and MacOS.
   - [X] About page
   - [ ] Help page
   - [ ] Add support for MacOS
-  - [ ] Add support for Windows (maybe )
+  - [ ] Add support for Windows (maybe ¯\\\_(ツ)\_/¯ )
 
 
 
