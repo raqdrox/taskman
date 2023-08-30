@@ -3,6 +3,10 @@ A PyQT5 Based Task Manager for Linux and MacOS.
 
 ## CHANGELOG
 
+### 0.1.1
+- Fixed bug where selected processes would change when the list was updated.
+- Fixed Bug where changing the update interval to No Update through menubar would not change the combobox selection.
+
 ### 0.1.0
 - View list of active processes and their resource consumption
 - Show User processes or All processes
@@ -65,8 +69,7 @@ A PyQT5 Based Task Manager for Linux and MacOS.
 
 
 ## Issues
-- Selected process can change when the list is updated (workaround: use No Update interval)
-
+None
 
 
 

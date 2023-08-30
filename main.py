@@ -56,16 +56,10 @@ class TaskManager(QMainWindow):
 
 
         #unselect when clicked on header
-        self.procTableWidget.horizontalHeader().sectionClicked.connect(lambda: self.procTableWidget.clearSelection())
+        #self.procTableWidget.horizontalHeader().sectionClicked.connect(lambda: self.procTableWidget.clearSelection())
 
         #expand table to fill parent
         self.procTableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
-
-
-        
-        
-
-
 
         #Delete key shortcut
         self.deleteShortcut=QtWidgets.QShortcut(QtGui.QKeySequence("Delete"),self)
@@ -81,6 +75,16 @@ class TaskManager(QMainWindow):
         self.tick_timer.start(1000)
 
         self.actionAbout.triggered.connect(self.ShowAboutDialog)
+
+
+        self.selectedPIDs=[]
+
+
+
+
+
+
+
 
 
 
@@ -122,7 +126,7 @@ class TaskManager(QMainWindow):
             else:
                 self.tick_timer.start(updateSpeedDict[speed])
                 self.tick_timer.setInterval(updateSpeedDict[speed])
-                self.updateSpeedSelector.setCurrentText(speed)
+            self.updateSpeedSelector.setCurrentText(speed)
 
 
 
@@ -190,7 +194,22 @@ class TaskManager(QMainWindow):
             self.populateProcessTable(data)
 
     def populateProcessTable(self,data):
+
+        #save selected pids
+        selectedPids=[]
+        selectedRows=self.procTableWidget.selectionModel().selectedRows()
+        for row in selectedRows:
+            selectedPids.append(int(self.procTableWidget.item(row.row(),1).text()))
+
+        #clear table
+        self.procTableWidget.clearContents()
+        self.procTableWidget.setRowCount(0)
+
+
         self.procTableWidget.setSortingEnabled(False)
+
+        self.procTableWidget.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+
         self.procTableWidget.setRowCount(len(data))
         row=0
         for pid,info in data.items():
@@ -201,9 +220,30 @@ class TaskManager(QMainWindow):
             self.procTableWidget.setItem(row,4,QtWidgets.QTableWidgetItem(format(info["memory_percent"],'.2f')))
             self.procTableWidget.setItem(row,5,QtWidgets.QTableWidgetItem(str(info["status"])))
             self.procTableWidget.setItem(row,6,QtWidgets.QTableWidgetItem(' '.join(info["cmdline"])))
+
+            if pid in selectedPids:
+                self.procTableWidget.selectRow(row)
+
             row+=1
 
-        self.procTableWidget.setSortingEnabled(True)        
+        self.procTableWidget.setSortingEnabled(True)    
+        
+        self.procTableWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+
+
+
+
+
+        
+
+            
+
+
+
+
+        
+
+
 
 
     def ShowAboutDialog(self):
