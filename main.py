@@ -70,17 +70,46 @@ class TaskManager(QMainWindow):
         self.forceDeleteShortcut.activated.connect(lambda: self.SendSignalToSelectedProcess("SIGTERM"))
 
         
+        #Update Timer
         self.tick_timer = QTimer(self)
         self.tick_timer.timeout.connect(self.tick)
         self.tick_timer.start(1000)
 
+        #About Dialog
         self.actionAbout.triggered.connect(self.ShowAboutDialog)
 
+        #Search Box
+        self.searchText=""
+        self.searchFilterProp="name"
 
-        self.selectedPIDs=[]
+        self.processData={}
+        self.processSearchBox.textChanged.connect(self.SearchProcess)
+
+        #Filter by Selector
+        self.filterBySelector.currentTextChanged.connect(self.FilterBySelect)
 
 
 
+
+    def FilterBySelect(self,filter):
+        selector_map={"Name":"name","PID":"pid","User":"username","Status":"status","Command":"cmdline"}
+        self.searchFilterProp=selector_map[filter]
+
+        self.SearchProcess(self.searchText)
+
+    def SearchProcess(self,text):
+        self.searchText=text
+        data=self.filterProcessData(self.processData,self.searchText,self.searchFilterProp)
+        self.populateProcessTable(data)
+
+        
+
+
+
+
+
+
+    
 
 
 
@@ -190,8 +219,7 @@ class TaskManager(QMainWindow):
         else:
             data=prochandler.get_procs_dict_for_current_user()
         
-        if data:
-            self.populateProcessTable(data)
+        return data
 
     def populateProcessTable(self,data):
 
@@ -234,8 +262,30 @@ class TaskManager(QMainWindow):
 
 
 
-        
+    def filterProcessData(self,data,value,by):
+        filteredData={}
 
+        if value=="":
+            return data
+
+        for pid,info in data.items():
+            if self.CheckFilter((pid,info),value,by):
+                filteredData[pid]=info
+        return filteredData
+
+    def CheckFilter(self,tup,value,filter):
+        if filter=="name":
+            return value in tup[1]["name"]
+        elif filter=="pid":
+            return value in str(tup[0])
+        elif filter=="username":
+            return value in tup[1]["username"]
+        elif filter=="status":
+            return value in tup[1]["status"]
+        elif filter=="cmdline":
+            return value in ' '.join(tup[1]["cmdline"])
+        else:
+            return False
             
 
 
@@ -253,7 +303,7 @@ class TaskManager(QMainWindow):
         dialog.setLayout(QVBoxLayout())
         dialog.layout().addWidget(QLabel("Taskman"))
         dialog.layout().addWidget(QLabel("Author: @raqdrox"))
-        dialog.layout().addWidget(QLabel("Version: 0.1"))
+        dialog.layout().addWidget(QLabel("Version: 0.1.2"))
         link=QLabel("<a href='https://github.com/raqdrox/taskman'>https://github.com/raqdrox/taskman</a>")
         link.setOpenExternalLinks(True)
         dialog.layout().addWidget(link)
@@ -262,7 +312,9 @@ class TaskManager(QMainWindow):
 
 
     def tick(self):
-        self.loadProcessData(self.showAllCheckbox.isChecked())
+        self.processData=self.loadProcessData(self.showAllCheckbox.isChecked())
+        filteredData=self.filterProcessData(self.processData,self.searchText,self.searchFilterProp)
+        self.populateProcessTable(filteredData)
         
 
 

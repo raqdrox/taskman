@@ -3,6 +3,15 @@ A PyQT5 Based Task Manager for Linux and MacOS.
 
 ## CHANGELOG
 
+### 0.1.2
+- Added Search and Filter functionality to Process Manager.
+- Supported Filters
+  - User
+  - PID
+  - Name
+  - Command
+  - Status
+
 ### 0.1.1
 - Fixed bug where selected processes would change when the list was updated.
 - Fixed Bug where changing the update interval to No Update through menubar would not change the combobox selection.
@@ -36,7 +45,7 @@ A PyQT5 Based Task Manager for Linux and MacOS.
   - [X] Sort processes by PID, Name, User, CPU%, Memory%, Command and Status
   - [X] Send POSIX Signals to processes
   - [X] Send signals to multiple processes
-  - [ ] Search for processes by name or PID
+  - [X] Search for processes by name or PID
   - [ ] View process details
   - [ ] View process tree
   - [ ] Launch new processes
@@ -69,7 +78,7 @@ A PyQT5 Based Task Manager for Linux and MacOS.
 
 
 ## Issues
-None
+- When in No Update mode, Show all processes toggle does not update the list of processes until the update is resumed by switching to other modes.
 
 
 
